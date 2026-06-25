@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlowStock | Panel de Control</title>
+    <link rel="stylesheet" href="estilo.css">
+    <!-- Iconos de FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="dashboard-web-body">
+
+    <div class="web-layout">
+        
+        <!-- MENÚ LATERAL (SIDEBAR) -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <h1>GlowStock</h1>
+                <p>Control de Almacén</p>
+                <!-- Botón para cerrar el menú en móviles (X) -->
+                <button class="close-sidebar-btn" id="close-sidebar">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <nav class="sidebar-menu">
+                <a href="#" class="menu-item active"><i class="fa-solid fa-boxes-stacked"></i> Inventario</a>
+                <a href="#" class="menu-item"><i class="fa-solid fa-bell"></i> Alertas de Stock</a>
+                <a href="#" class="menu-item"><i class="fa-solid fa-circle-user"></i> Mi Cuenta</a>
+            </nav>
+            <div class="sidebar-footer">
+                <p class="user-logged">👤 Administrador</p>
+                <a href="index.html" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
+            </div>
+        </aside>
+
+        <!-- CONTENEDOR PRINCIPAL (DERECHA) -->
+        <div class="main-wrapper">
+            
+            <!-- BARRA SUPERIOR FIJA (Estilo Figma / TailAdmin) -->
+            <header class="top-header">
+                <div class="header-left-block">
+                    <!-- Botón de hamburguesa (Líder a la izquierda en móvil) -->
+                    <button class="hamburger-btn" id="hamburger-menu">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    
+                    <!-- Caja de búsqueda pulida -->
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" placeholder="Buscar producto o marca...">
+                    </div>
+                </div>
+                
+                <!-- Perfil e Iconos a la derecha -->
+                <div class="header-profile">
+                    <i class="fa-regular fa-bell icon-header"></i>
+                    <i class="fa-regular fa-comment icon-header"></i>
+                    <div class="profile-info">
+                        <span class="profile-name">Carlos Daniel</span>
+                        <span class="profile-role">Admin</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- ÁREA DE CONTENIDO DE LA PÁGINA -->
+            <main class="main-content">
+                
+                <!-- Fila de Título de Módulo y Acción -->
+                <div class="content-action-bar">
+                    <div class="page-title">
+                        <h2>Control de Existencias</h2>
+                    </div>
+                    <button class="btn-add-product">
+                        <i class="fa-solid fa-plus"></i> Registrar Producto
+                    </button>
+                </div>
+
+                <!-- Panel de Filtros por Categorías -->
+                <section class="categories-panel">
+                    <h3>Categorías de Cosméticos</h3>
+                    <div class="categories-row">
+                        <button class="filter-btn active">Todos los Productos</button>
+                        <button class="filter-btn">Bases de Maquillaje</button>
+                        <button class="filter-btn">Labiales</button>
+                        <button class="filter-btn">Polvos Compactos</button>
+                    </div>
+                </section>
+
+                <!-- Rejilla de Tarjetas de Productos -->
+                <section class="inventory-web-grid">
+                    
+                    <div class="web-card">
+                        <div class="card-image"><i class="fa-solid fa-box-open"></i></div>
+                        <div class="card-details">
+                            <span class="sku-tag">SKU: 401255</span>
+                            <h3>Base Líquida Matte</h3>
+                            <div class="stock-status in-stock">Existencias: 15 pz</div>
+                        </div>
+                    </div>
+
+                    <div class="web-card">
+                        <div class="card-image"><i class="fa-solid fa-box-open"></i></div>
+                        <div class="card-details">
+                            <span class="sku-tag">SKU: 309411</span>
+                            <h3>Labial Rojo Pasión</h3>
+                            <div class="stock-status low-stock">Existencias: 03 pz</div>
+                        </div>
+                    </div>
+
+                    <div class="web-card">
+                        <div class="card-image"><i class="fa-solid fa-box-open"></i></div>
+                        <div class="card-details">
+                            <span class="sku-tag">SKU: 789102</span>
+                            <h3>Polvo Compacto T2</h3>
+                            <div class="stock-status in-stock">Existencias: 20 pz</div>
+                        </div>
+                    </div>
+
+                    <div class="web-card">
+                        <div class="card-image"><i class="fa-solid fa-box-open"></i></div>
+                        <div class="card-details">
+                            <span class="sku-tag">SKU: 110293</span>
+                            <h3>Rímel Black Out</h3>
+                            <div class="stock-status out-of-stock">Agotado (00 pz)</div>
+                        </div>
+                    </div>
+
+                </section>
+            </main>
+        </div>
+
+    </div>
+
+    <!-- Script de control interactivo -->
+    <script src="app.js"></script>
+</body>
+</html>
