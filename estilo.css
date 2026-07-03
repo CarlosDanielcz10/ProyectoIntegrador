@@ -1,18 +1,20 @@
-*{
+
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
- 
+
 body {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     background: linear-gradient(135deg, #fbe3e8 0%, #ecd0db 50%, #dfb2c4 100%);
+    padding: 15px; /* Evita que la tarjeta toque los bordes físicos de la pantalla móvil */
 }
- 
+
 .login-container {
     background: #ffffff;
     padding: 2.5rem;
@@ -22,11 +24,11 @@ body {
     max-width: 420px;
     text-align: center;
 }
- 
+
 .login-header {
     margin-bottom: 2rem;
 }
- 
+
 .brand-name {
     font-size: 2rem;
     color: #c06c84;
@@ -35,19 +37,19 @@ body {
     font-weight: 500;
     margin-bottom: 0.3rem;
 }
- 
+
 .brand-subtitle {
     font-size: 0.85rem;
     color: #a88a93;
     letter-spacing: 1px;
 }
- 
+
 /* Campos de Formulario */
 .form-group {
     text-align: left;
     margin-bottom: 1.2rem;
 }
- 
+
 .form-group label {
     display: block;
     font-size: 0.9rem;
@@ -55,7 +57,7 @@ body {
     margin-bottom: 0.5rem;
     font-weight: 500;
 }
- 
+
 .form-group input[type="text"],
 .form-group input[type="password"] {
     width: 100%;
@@ -68,18 +70,17 @@ body {
     outline: none;
     transition: all 0.3s ease;
 }
- 
+
 .form-group input::placeholder {
     color: #c5b3b8;
 }
- 
+
 .form-group input:focus {
     border-color: #c06c84;
     background-color: #ffffff;
     box-shadow: 0 0 0 3px rgba(192, 108, 132, 0.15);
 }
- 
-/* Opciones (Recordar y Olvidé mi contraseña) */
+
 .form-options {
     display: flex;
     justify-content: space-between;
@@ -87,7 +88,7 @@ body {
     font-size: 0.85rem;
     margin-bottom: 2rem;
 }
- 
+
 .remember-me {
     color: #765861;
     cursor: pointer;
@@ -95,22 +96,21 @@ body {
     align-items: center;
     gap: 5px;
 }
- 
+
 .remember-me input {
     accent-color: #c06c84;
 }
- 
+
 .forgot-password {
     color: #a88a93;
     text-decoration: underline;
     transition: color 0.2s;
 }
- 
+
 .forgot-password:hover {
     color: #c06c84;
 }
- 
- 
+
 .btn-primary {
     width: 100%;
     padding: 14px;
@@ -124,375 +124,30 @@ body {
     box-shadow: 0 4px 12px rgba(192, 108, 132, 0.3);
     transition: transform 0.2s, opacity 0.2s;
 }
- 
+
 .btn-primary:hover {
     opacity: 0.95;
     transform: translateY(-1px);
 }
- 
+
 .btn-primary:active {
     transform: translateY(1px);
 }
-/* ==========================================================================
-   ESTILOS COMPLETOS DEL DASHBOARD RESPONSIVO (GLOWSTOCK)
-   ========================================================================== */
 
-/* CORRECCIÓN GLOBAL PARA EVITAR EL DEGRADADO DEL LOGIN */
-body.dashboard-web-body {
-    background: #f4f6f9 !important; /* Mata el fondo rosa del login */
-    display: block !important;      /* Rompe el centrado flex del login */
-    min-height: 100vh;
-    overflow-x: hidden;
-    margin: 0;
-    padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
 
-/* 1. ASEGURA QUE EL CONTENEDOR PADRE NO TENGA DESBORDAMIENTO */
-.web-layout {
-    display: flex;
-    min-height: 100vh;
-    width: 100%;
-    overflow: hidden; /* Evita que aparezcan barras de scroll raras */
-}
+@media (max-width: 480px) {
+    .login-container {
+        padding: 1.3rem; 
+        border-radius: 20px;
+    }
 
-/* 2. REAJUSTA EL MENÚ LATERAL */
-.sidebar {
-    width: 260px;
-    flex-shrink: 0; /* Evita que el menú se aplaste */
-    background-color: #ffffff;
-    border-right: 1px solid #e2e8f0;
-    display: flex;
-    flex-direction: column;
-    padding: 2rem 1.5rem;
-    height: 100vh;
-    box-sizing: border-box;
-    position: relative;
-    z-index: 10;
-    margin-left: -260px; /* Escondido por defecto */
-    transition: margin-left 0.3s ease;
-}
+    .brand-name {
+        font-size: 1.75rem; 
+    }
 
-.sidebar-brand {
-    position: relative;
-}
-
-.sidebar-brand h1 {
-    font-size: 1.6rem;
-    color: #c06c84;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin: 0 0 0.2rem 0;
-}
-
-.sidebar-brand p {
-    font-size: 0.8rem;
-    color: #a88a93;
-    margin: 0 0 2.5rem 0;
-}
-
-.sidebar-menu {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    flex-grow: 1;
-}
-
-.menu-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 15px;
-    color: #765861;
-    text-decoration: none;
-    font-size: 0.95rem;
-    font-weight: 500;
-    border-radius: 8px;
-    transition: all 0.2s ease;
-}
-
-.menu-item:hover, .menu-item.active {
-    background-color: rgba(192, 108, 132, 0.08);
-    color: #c06c84;
-}
-
-.sidebar-footer {
-    border-top: 1px solid #e2e8f0;
-    padding-top: 1rem;
-}
-
-.user-logged {
-    font-size: 0.9rem;
-    color: #334155;
-    margin-bottom: 8px;
-}
-
-.logout-btn { 
-    color: #64748b; 
-    text-decoration: none; 
-    font-size: 0.85rem;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.logout-btn:hover { 
-    color: #c06c84; 
-}
-
-.main-wrapper {
-    flex-grow: 1;
-    width: 100%; /* Cambiado de 100vw a 100% */
-    flex-shrink: 1; /* Permite que el bloque se encoja cuando el sidebar ocupa espacio */
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
-    transition: all 0.3s ease;
-}
-
-/* BARRA SUPERIOR FIJA (ESTILO FIGMA) */
-.top-header {
-    height: 70px;
-    background-color: #ffffff;
-    border-bottom: 1px solid #e2e8f0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 2rem;
-    position: sticky;
-    top: 0;
-    z-index: 5;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.header-left-block {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    flex-grow: 1;
-}
-
-.hamburger-btn {
-    background: none;
-    border: none;
-    font-size: 1.3rem;
-    color: #765861;
-    cursor: pointer;
-    display: flex; /* <--- Cambiado de 'none' a 'flex' para que se vea en PC */
-    padding: 5px;
-    align-items: center;
-    justify-content: center;
-}
-
-/* ACOMODAR LA 'X' DE MANERA LIMPIA (Solo si decides dejarla en PC) */
-.close-sidebar-btn {
-    background: none;
-    border: none;
-    font-size: 1.1rem;
-    color: #765861;
-    cursor: pointer;
-    position: absolute;
-    right: 15px;
-    top: 15px; /* Lo sube a la esquina superior derecha del contenedor */
-}
-
-/* Caja de búsqueda modular */
-.search-box {
-    position: relative;
-    width: 100%;
-    max-width: 350px;
-}
-
-.search-box i {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #94a3b8;
-    font-size: 0.9rem;
-}
-
-.search-box input {
-    width: 100%;
-    padding: 8px 12px 8px 35px;
-    border: 1px solid #e2e8f0;
-    border-radius: 20px;
-    outline: none;
-    font-size: 0.9rem;
-    color: #334155;
-    background-color: #f8fafc;
-}
-
-/* Perfil e Iconos del header */
-.header-profile {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.icon-header {
-    color: #64748b;
-    font-size: 1.2rem;
-    cursor: pointer;
-}
-
-.profile-info {
-    display: flex;
-    flex-direction: column;
-    text-align: right;
-}
-
-.profile-name {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #334155;
-}
-
-.profile-role {
-    font-size: 0.75rem;
-    color: #64748b;
-}
-
-/* ÁREA DE TRABAJO PRINCIPAL */
-.main-content {
-    padding: 2rem;
-    box-sizing: border-box;
-}
-
-.content-action-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-}
-
-.page-title h2 {
-    font-size: 1.4rem;
-    color: #1e293b;
-    margin: 0;
-    font-weight: 700;
-}
-
-.btn-add-product {
-    padding: 10px 20px;
-    background: linear-gradient(90deg, #d27993, #c06c84);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(192, 108, 132, 0.2);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-/* CONTENEDOR MODULAR PARA FILTROS */
-.categories-panel {
-    background-color: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 1.2rem;
-    margin-bottom: 2rem;
-}
-
-.categories-panel h3 {
-    font-size: 0.95rem;
-    color: #475569;
-    margin: 0 0 1rem 0;
-}
-
-.categories-row {
-    display: flex;
-    gap: 10px;
-}
-
-.filter-btn {
-    padding: 8px 16px;
-    background-color: #f1f5f9;
-    border: 1px solid #e2e8f0;
-    border-radius: 20px;
-    color: #475569;
-    cursor: pointer;
-    font-weight: 500;
-    font-size: 0.85rem;
-    transition: all 0.2s;
-}
-
-.filter-btn:hover {
-    background-color: #e2e8f0;
-}
-
-.filter-btn.active {
-    background-color: #c06c84;
-    color: #ffffff;
-    border-color: #c06c84;
-}
-
-/* REJILLA DE PRODUCTOS (GRID DE TARJETAS) */
-.inventory-web-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-    gap: 20px;
-}
-
-.web-card {
-    background-color: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.web-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.06);
-}
-
-.card-image {
-    background-color: #f8fafc;
-    height: 130px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #dfb2c4;
-    font-size: 2.3rem;
-    border-bottom: 1px solid #edf2f7;
-}
-
-.card-details {
-    padding: 1rem;
-}
-
-.sku-tag {
-    font-size: 0.75rem;
-    color: #94a3b8;
-    font-weight: 600;
-    display: block;
-    margin-bottom: 4px;
-}
-
-.card-details h3 {
-    font-size: 0.95rem;
-    color: #1e293b;
-    margin: 0 0 1rem 0;
-}
-
-.stock-status {
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    text-align: center;
-}
-
-.in-stock { background-color: #dcfce7; color: #15803d; }
-.low-stock { background-color: #ffedd5; color: #c2410c; }
-.out-of-stock { background-color: #fee2e2; color: #b91c1c; }
-
-.sidebar.active {
-    margin-left: 0 !important; /* Al activarse, regresa a su posición y empuja lo demás */
+    .form-options {
+        flex-direction: column; 
+        gap: 12px;
+        align-items: flex-start;
+    }
 }
