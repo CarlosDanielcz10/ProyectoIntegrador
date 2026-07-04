@@ -1,44 +1,42 @@
-// 1. Esperamos a que todo el HTML de la página cargue correctamente
 document.addEventListener("DOMContentLoaded", () => {
     
-    // 2. Buscamos el botón "Entrar al Sistema" usando su clase CSS
-    const botonEntrar = document.querySelector(".btn-primary");
+    // 1. Lógica de Navegación (SPA)
+    const menuItems = document.querySelectorAll('.menu-item');
+    const views = document.querySelectorAll('.view');
 
-    // 3. Le agregamos el evento de "escuchar el clic"
-    botonEntrar.addEventListener("click", () => {
-        
-        // Aquí puedes agregar validaciones más adelante (ej. si están vacíos los campos)
-        const usuario = document.getElementById("usuario").value;
-        const contrasena = document.getElementById("password").value;
-
-        if(usuario === "" || contrasena === "") {
-            alert("Por favor, llena todos los campos administrativos.");
-        } else {
-            // Mandamos al usuario a la pantalla del inventario logístico
-            window.location.href = "inv.html";
-        }
+    menuItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Quitar 'active' de todos los items y vistas
+            menuItems.forEach(i => i.classList.remove('active'));
+            views.forEach(v => v.classList.remove('active'));
+            
+            // Poner 'active' al presionado
+            this.classList.add('active');
+            
+            // Mostrar la vista correspondiente
+            const targetId = this.getAttribute('data-target');
+            const targetView = document.getElementById(targetId);
+            if (targetView) {
+                targetView.classList.add('active');
+            }
+        });
     });
-});
-// Asegúrate de poner esto dentro de tu DOMContentLoaded o al final del archivo
-document.addEventListener("DOMContentLoaded", () => {
-    
-    // ... Aquí dejas tu código existente del botón entrar ...
 
-    // CÓDIGO PARA EL MENÚ RESPONSIVO
-    const hamburgerMenu = document.getElementById("hamburger-menu");
-    const closeSidebar = document.getElementById("close-sidebar");
+    // 2. Lógica del Menú Hamburguesa (Móvil)
+    const hamburgerBtn = document.getElementById("hamburger-menu");
+    const closeSidebarBtn = document.getElementById("close-sidebar");
     const sidebar = document.getElementById("sidebar");
 
-    // Si existen en la página actual (para que no marque error en el login)
-    if (hamburgerMenu && sidebar && closeSidebar) {
-        
-        // Al dar clic al botón de hamburguesa, añade la clase que lo muestra
-        hamburgerMenu.addEventListener("click", () => {
+    if (hamburgerBtn && sidebar) {
+        hamburgerBtn.addEventListener("click", () => {
             sidebar.classList.add("active");
         });
+    }
 
-        // Al dar clic a la 'X', remueve la clase para esconderlo
-        closeSidebar.addEventListener("click", () => {
+    if (closeSidebarBtn && sidebar) {
+        closeSidebarBtn.addEventListener("click", () => {
             sidebar.classList.remove("active");
         });
     }
