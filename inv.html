@@ -8,9 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="dashboard-web-body">
-
     <div class="web-layout">
-        
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-brand">
                 <h1>GlowStock</h1>
@@ -31,7 +29,7 @@
                 </a>
             </nav>
             <div class="sidebar-footer">
-                <p class="user-logged">👤 Administrador</p>
+                <p class="user-logged"> Administrador</p>
                 <a href="index.html" class="logout-btn">
                     <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
                 </a>
@@ -39,7 +37,6 @@
         </aside>
 
         <div class="main-wrapper">
-            
             <header class="top-header">
                 <div class="header-left-block">
                     <button class="hamburger-btn" id="hamburger-menu">
@@ -50,7 +47,6 @@
                         <input type="text" placeholder="Buscar producto o marca...">
                     </div>
                 </div>
-                
                 <div class="header-profile">
                     <i class="fa-regular fa-bell icon-header"></i>
                     <i class="fa-regular fa-comment icon-header"></i>
@@ -62,17 +58,17 @@
             </header>
 
             <main class="main-content">
-                
                 <section id="view-inventario" class="view active">
                     <div class="content-action-bar">
                         <div class="page-title">
                             <h2>Control de Existencias</h2>
                         </div>
-                        <button class="btn-add-product">
+                        
+                        <button class="btn-add-product" id="btn-abrir-modal">
                             <i class="fa-solid fa-plus"></i> Registrar Producto
                         </button>
+                        
                     </div>
-
                     <section class="categories-panel">
                         <h3>Categorías de Cosméticos</h3>
                         <div class="categories-row">
@@ -82,7 +78,6 @@
                             <button class="filter-btn">Polvos Compactos</button>
                         </div>
                     </section>
-
                     <section class="inventory-web-grid">
                         <div class="web-card">
                             <div class="card-image"><i class="fa-solid fa-box-open"></i></div>
@@ -92,7 +87,6 @@
                                 <div class="stock-status in-stock">Existencias: 15 pz</div>
                             </div>
                         </div>
-
                         <div class="web-card">
                             <div class="card-image"><i class="fa-solid fa-box-open"></i></div>
                             <div class="card-details">
@@ -101,7 +95,6 @@
                                 <div class="stock-status low-stock">Existencias: 03 pz</div>
                             </div>
                         </div>
-
                         <div class="web-card">
                             <div class="card-image"><i class="fa-solid fa-box-open"></i></div>
                             <div class="card-details">
@@ -110,7 +103,6 @@
                                 <div class="stock-status in-stock">Existencias: 20 pz</div>
                             </div>
                         </div>
-
                         <div class="web-card">
                             <div class="card-image"><i class="fa-solid fa-box-open"></i></div>
                             <div class="card-details">
@@ -121,14 +113,13 @@
                         </div>
                     </section>
                 </section>
-
+                
                 <section id="view-alertas" class="view">
                     <div class="content-action-bar">
                         <div class="page-title">
                             <h2>Centro de Alertas</h2>
                         </div>
                     </div>
-
                     <div class="summary-cards-grid">
                         <div class="summary-card danger">
                             <div class="card-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
@@ -138,7 +129,6 @@
                                 <p>Productos sin stock</p>
                             </div>
                         </div>
-
                         <div class="summary-card warning">
                             <div class="card-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
                             <div class="card-info">
@@ -147,7 +137,6 @@
                                 <p>Menos de 10 unidades</p>
                             </div>
                         </div>
-
                         <div class="summary-card success">
                             <div class="card-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
                             <div class="card-info">
@@ -157,7 +146,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="alerts-list-container">
                         <h3>Detalle de Atención Inmediata</h3>
                         <div class="alert-item">
@@ -176,14 +164,13 @@
                         </div>
                     </div>
                 </section>
-
+                
                 <section id="view-cuenta" class="view">
                     <div class="content-action-bar">
                         <div class="page-title">
                             <h2>Mi Cuenta</h2>
                         </div>
                     </div>
-
                     <div class="account-settings-wrapper">
                         <div class="profile-card">
                             <div class="profile-avatar">
@@ -192,7 +179,6 @@
                             <h3>Carlos Daniel</h3>
                             <p class="role-tag">Administrador Principal</p>
                         </div>
-
                         <div class="settings-form-container">
                             <h3>Información Personal</h3>
                             <form class="settings-form">
@@ -206,19 +192,17 @@
                                         <input type="email" value="admin@glowstock.com">
                                     </div>
                                 </div>
-                                
                                 <h3 class="security-title">Seguridad</h3>
                                 <div class="form-row">
                                     <div class="form-group">
                                         <label>Nueva Contraseña</label>
-                                        <input type="password" placeholder="••••••••">
+                                        <input type="password" placeholder="........">
                                     </div>
                                     <div class="form-group">
                                         <label>Confirmar Contraseña</label>
-                                        <input type="password" placeholder="••••••••">
+                                        <input type="password" placeholder="........">
                                     </div>
                                 </div>
-
                                 <div class="form-actions">
                                     <button type="button" class="btn-secondary">Cancelar</button>
                                     <button type="button" class="btn-primary">Guardar Cambios</button>
@@ -227,11 +211,34 @@
                         </div>
                     </div>
                 </section>
-
             </main>
         </div>
-
     </div>
+    
+    <div id="modal-registro" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Registrar Nuevo Producto</h2>
+                <button id="cerrar-modal" class="close-modal-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form class="modal-form">
+                <div class="form-group">
+                    <label>Nombre del Producto</label>
+                    <input type="text" placeholder="Ej. Delineador Líquido">
+                </div>
+                <div class="form-group">
+                    <label>SKU (Código)</label>
+                    <input type="text" placeholder="Ej. 102938">
+                </div>
+                <div class="form-group">
+                    <label>Cantidad Inicial</label>
+                    <input type="number" placeholder="0">
+                </div>
+                <button type="button" class="btn-primary" id="btn-guardar-simulado">Guardar Producto</button>
+            </form>
+        </div>
+    </div>
+    
     <script src="app.js"></script>
 </body>
 </html>

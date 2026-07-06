@@ -174,7 +174,7 @@ body {
     position: relative;
     z-index: 10;
     margin-left: -260px; /* Escondido por defecto */
-    transition: margin-left 0.3s ease;
+    transition: all 0.3s ease;
 }
 
 .sidebar-brand {
@@ -498,7 +498,7 @@ body {
 .out-of-stock { background-color: #fee2e2; color: #b91c1c; }
 
 .sidebar.active {
-    margin-left: 0 !important; /* Al activarse, regresa a su posición y empuja lo demás */
+    margin-left: 0; /* Al activarse, regresa a su posición y empuja lo demás */
 }
 /* Esto es lo más importante para que no se vea todo amontonado */
 .view {
@@ -508,69 +508,6 @@ body {
 .view.active {
     display: block;
 }
-/* ===============================
-   VISTA: ALERTAS
-================================= */
-.summary-cards-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    margin-bottom: 30px;
-}
-
-.summary-card {
-    background: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    border-left: 5px solid #ccc;
-}
-
-.summary-card.danger { border-left-color: #ef4444; }
-.summary-card.danger .card-icon { color: #ef4444; font-size: 2rem; }
-
-.summary-card.warning { border-left-color: #f59e0b; }
-.summary-card.warning .card-icon { color: #f59e0b; font-size: 2rem; }
-
-.summary-card.success { border-left-color: #10b981; }
-.summary-card.success .card-icon { color: #10b981; font-size: 2rem; }
-
-.card-info h3 { font-size: 0.9rem; color: #64748b; margin-bottom: 5px; }
-.card-info .card-number { font-size: 1.8rem; font-weight: bold; color: #1e293b; }
-.card-info p { font-size: 0.8rem; color: #94a3b8; margin-top: 5px; }
-
-.alerts-list-container {
-    background: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-}
-
-.alert-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 15px 0;
-    border-bottom: 1px solid #e2e8f0;
-}
-.alert-item:last-child { border-bottom: none; }
-
-.alert-badge { padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
-.danger-badge { background: #fee2e2; color: #ef4444; }
-.warning-badge { background: #fef3c7; color: #f59e0b; }
-
-.btn-restock {
-    padding: 8px 15px;
-    background: #3b82f6;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
 /* ===============================
    VISTA: ALERTAS
 ================================= */
@@ -697,4 +634,61 @@ body {
 @media (max-width: 768px) {
     .account-settings-wrapper { grid-template-columns: 1fr; }
     .settings-form .form-row { flex-direction: column; }
+}
+/* =========================================
+   DISEÑO DEL MODAL (VENTANA FLOTANTE)
+   ========================================= */
+.modal-overlay {
+    display: none; /* Oculto por defecto, el JS lo cambia a flex */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro semitransparente */
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 1rem;
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: #1e293b;
+    font-size: 1.25rem;
+}
+
+.close-modal-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #94a3b8;
+    cursor: pointer;
+}
+
+.modal-form .form-group {
+    margin-bottom: 1rem;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
