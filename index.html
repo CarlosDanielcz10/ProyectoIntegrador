@@ -1,44 +1,589 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GlowStock | Inicio de Sesión</title>
+    <title>Glowstock - Control de Almacén</title>
+    
+    <!-- Fuentes e Iconos -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS -->
     <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
 
-    <div class="login-container">
-        
-        <div class="login-header">
-            <h1 class="brand-name">GlowStock</h1>
-            <p class="brand-subtitle">Gestión de Inventario de Cosméticos</p>
-        </div>
-
-        <div class="login-form">
+    <!-- ================= VISTA: LOGIN ================= -->
+    <div id="login-view">
+        <div class="login-card">
+            <h1>GLOWSTOCK</h1>
+            <p>Sistema de Control de Almacén</p>
             
-            <div class="form-group">
-                <label for="usuario">Usuario o Correo</label>
-                <input type="text" id="usuario" name="usuario" placeholder="Ej. administrador / encargado">
-            </div>
-
-            <div class="form-group">
-                <label for="password">Contraseña</label>
-                <input type="password" id="password" name="password" placeholder="Ingresa tu contraseña">
-            </div>
-
-            <div class="form-options">
-                <label class="remember-me">
-                    <input type="checkbox" name="recordar"> Recordar mi sesión
-                </label>
-                <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
-            </div>
-
-            <button type="button" class="btn-primary" onclick="window.location.href='inv.html'">Entrar al Sistema</button>
-            
+            <form id="login-form">
+                <div class="input-group">
+                    <label>Correo Electrónico</label>
+                    <input type="email" placeholder="admin@glowstock.com" required>
+                </div>
+                <div class="input-group">
+                    <label>Contraseña</label>
+                    <input type="password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn login-btn">Iniciar Sesión</button>
+            </form>
         </div>
-
     </div>
+
+    <!-- ================= VISTA: DASHBOARD ================= -->
+    <div id="dashboard-view" class="hidden">
+        
+        <!-- Menú Lateral (Sidebar) -->
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <h2>GLOWSTOCK</h2>
+                <span>Control de Almacén</span>
+            </div>
+            <nav class="nav-menu">
+                <a class="nav-item active" data-target="view-inicio">
+                    <i class="fa-solid fa-house"></i> Inicio
+                </a>
+                <a class="nav-item" data-target="view-inventario">
+                    <i class="fa-solid fa-boxes-stacked"></i> Inventario
+                </a>
+                <!-- NUEVA PESTAÑA: MOVIMIENTOS -->
+                <a class="nav-item" data-target="view-movimientos">
+                    <i class="fa-solid fa-right-left"></i> Movimientos
+                </a>
+                <a class="nav-item" data-target="view-alertas">
+                    <i class="fa-solid fa-bell"></i> Alertas de Stock
+                </a>
+                <a class="nav-item" data-target="view-cuenta">
+                    <i class="fa-solid fa-user"></i> Mi Cuenta
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="logout-btn" id="btn-logout">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar Sesión
+                </div>
+            </div>
+        </aside>
+
+        <!-- Contenido Principal -->
+        <main class="main-content">
+            
+            <!-- Barra Superior (Topbar) -->
+            <header class="topbar">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menu-toggle">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div class="search-bar">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" placeholder="Buscar producto o marca...">
+                    </div>
+                </div>
+                <div class="user-info">
+                    <i class="fa-regular fa-bell"></i>
+                    <div class="user-profile">
+                        <div class="user-text">
+                            <span class="user-name">Carlos Daniel</span>
+                            <span class="user-role">Admin</span>
+                        </div>
+                        <div class="avatar">CD</div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Área de Contenido Dinámico -->
+            <div class="content-area">
+
+                <!-- ================= SECCIÓN: INICIO ================= -->
+                <div id="view-inicio" class="section-view">
+                    <div class="welcome-header">
+                        <h1>Bienvenido ✨</h1>
+                        <p id="current-date-text">Cargando fecha...</p>
+                    </div>
+
+                    <div class="summary-cards">
+                        <div class="sum-card card-pink">
+                            <div class="card-info">
+                                <span>Total Productos</span>
+                                <h3>8</h3>
+                            </div>
+                            <div class="card-icon"><i class="fa-solid fa-cube"></i></div>
+                        </div>
+                        <div class="sum-card card-orange">
+                            <div class="card-info">
+                                <span>Alertas Activas</span>
+                                <h3>5</h3>
+                            </div>
+                            <div class="card-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                        </div>
+                        <div class="sum-card card-purple">
+                            <div class="card-info">
+                                <span>Pedidos Pendientes</span>
+                                <h3>2</h3>
+                            </div>
+                            <div class="card-icon"><i class="fa-solid fa-cart-shopping"></i></div>
+                        </div>
+                        <div class="sum-card card-green">
+                            <div class="card-info">
+                                <span>Movimientos Hoy</span>
+                                <h3>0</h3>
+                            </div>
+                            <div class="card-icon"><i class="fa-solid fa-arrow-trend-up"></i></div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-widgets">
+                        <div class="widget">
+                            <div class="widget-header">
+                                <h3>Alertas Recientes</h3>
+                                <a href="#">Ver todas &rarr;</a>
+                            </div>
+                            <div class="widget-list">
+                                <div class="list-item item-orange">
+                                    <i class="fa-solid fa-box"></i>
+                                    <div>
+                                        <strong>Sérum Vitamina C</strong>
+                                        <span>Stock bajo: 3 ml</span>
+                                    </div>
+                                </div>
+                                <div class="list-item item-yellow">
+                                    <i class="fa-solid fa-triangle-exclamation"></i>
+                                    <div>
+                                        <strong>Sérum Vitamina C</strong>
+                                        <span>Vence el 10/07/2026</span>
+                                    </div>
+                                </div>
+                                <div class="list-item item-red">
+                                    <i class="fa-solid fa-xmark"></i>
+                                    <div>
+                                        <strong>Máscara de Pestañas</strong>
+                                        <span>Venció el 20/12/2025</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="widget">
+                            <div class="widget-header">
+                                <h3>Pedidos Recientes</h3>
+                                <a href="#">Ver todos &rarr;</a>
+                            </div>
+                            <div class="widget-list">
+                                <div class="list-item bg-light">
+                                    <div>
+                                        <strong>The Ordinary México</strong>
+                                        <span><i class="fa-regular fa-clock"></i> 15/06/2026</span>
+                                    </div>
+                                    <span class="text-orange">Pendiente</span>
+                                </div>
+                                <div class="list-item bg-light">
+                                    <div>
+                                        <strong>MAC Cosmetics MX</strong>
+                                        <span><i class="fa-regular fa-clock"></i> 10/06/2026</span>
+                                    </div>
+                                    <span class="text-purple">En camino</span>
+                                </div>
+                                <div class="list-item bg-light">
+                                    <div>
+                                        <strong>L'Oréal Distribuidora</strong>
+                                        <span><i class="fa-regular fa-clock"></i> 28/05/2026</span>
+                                    </div>
+                                    <span class="text-green">Recibido</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= SECCIÓN: INVENTARIO ================= -->
+                <div id="view-inventario" class="section-view hidden">
+                    <div class="section-header" style="align-items: flex-end;">
+                        <div>
+                            <h1>Inventario</h1>
+                            <p class="subtitle">8 productos</p>
+                        </div>
+                        <button class="btn"><i class="fa-solid fa-plus"></i> Nuevo Producto</button>
+                    </div>
+
+                    <div class="table-controls">
+                        <div class="table-search">
+                            <i class="fa-solid fa-search"></i>
+                            <input type="text" placeholder="Buscar producto o marca...">
+                        </div>
+                        <div class="table-filters">
+                            <select>
+                                <option>Todas las categorías</option>
+                                <option>Maquillaje</option>
+                                <option>Skincare</option>
+                            </select>
+                            <select>
+                                <option>Todos los estados</option>
+                                <option>OK</option>
+                                <option>Stock bajo</option>
+                                <option>Vencido</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Marca</th>
+                                    <th>Categoría</th>
+                                    <th>Precio</th>
+                                    <th>Stock</th>
+                                    <th>Vencimiento</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <strong>Labial Mate Rouge</strong>
+                                        <span>Labial mate de larga duración color rojo intenso</span>
+                                    </td>
+                                    <td>MAC</td>
+                                    <td><span class="badge cat-badge">Maquillaje</span></td>
+                                    <td>$350.00</td>
+                                    <td><strong>12</strong> <span class="stock-min">/ mín 5</span></td>
+                                    <td>15/11/2026</td>
+                                    <td><span class="badge status-ok">OK</span></td>
+                                    <td class="actions">
+                                        <i class="fa-solid fa-pen text-pink"></i>
+                                        <i class="fa-solid fa-trash-can text-red"></i>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Sérum Vitamina C</strong>
+                                        <span>Sérum antioxidante con vitamina C al 23%</span>
+                                    </td>
+                                    <td>The Ordinary</td>
+                                    <td><span class="badge cat-badge">Skincare</span></td>
+                                    <td>$420.00</td>
+                                    <td><strong class="text-orange">3</strong> <span class="stock-min">/ mín 8 ml</span></td>
+                                    <td>10/07/2026</td>
+                                    <td><span class="badge status-warn">Próx. vencer</span></td>
+                                    <td class="actions">
+                                        <i class="fa-solid fa-pen text-pink"></i>
+                                        <i class="fa-solid fa-trash-can text-red"></i>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Base Fluida NW25</strong>
+                                        <span>Base de maquillaje fluida cobertura media</span>
+                                    </td>
+                                    <td>MAC</td>
+                                    <td><span class="badge cat-badge">Maquillaje</span></td>
+                                    <td>$680.00</td>
+                                    <td><strong>8</strong> <span class="stock-min">/ mín 5 unidad</span></td>
+                                    <td>01/12/2026</td>
+                                    <td><span class="badge status-ok">OK</span></td>
+                                    <td class="actions">
+                                        <i class="fa-solid fa-pen text-pink"></i>
+                                        <i class="fa-solid fa-trash-can text-red"></i>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Máscara de Pestañas</strong>
+                                        <span>Máscara voluminizadora negra intensa</span>
+                                    </td>
+                                    <td>L'Oréal</td>
+                                    <td><span class="badge cat-badge">Maquillaje</span></td>
+                                    <td>$280.00</td>
+                                    <td><strong>15</strong> <span class="stock-min">/ mín 10 unidad</span></td>
+                                    <td>20/12/2025</td>
+                                    <td><span class="badge status-out">Vencido</span></td>
+                                    <td class="actions">
+                                        <i class="fa-solid fa-pen text-pink"></i>
+                                        <i class="fa-solid fa-trash-can text-red"></i>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Crema Hidratante SPF30</strong>
+                                        <span>Hidratante facial con protección solar</span>
+                                    </td>
+                                    <td>CeraVe</td>
+                                    <td><span class="badge cat-badge">Skincare</span></td>
+                                    <td>$520.00</td>
+                                    <td><strong class="text-orange">6</strong> <span class="stock-min">/ mín 6</span></td>
+                                    <td>15/03/2027</td>
+                                    <td><span class="badge status-low">Stock bajo</span></td>
+                                    <td class="actions">
+                                        <i class="fa-solid fa-pen text-pink"></i>
+                                        <i class="fa-solid fa-trash-can text-red"></i>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Polvo Compacto Nude</strong>
+                                        <span>Polvo compacto acabado satinado tono nude</span>
+                                    </td>
+                                    <td>NARS</td>
+                                    <td><span class="badge cat-badge">Maquillaje</span></td>
+                                    <td>$590.00</td>
+                                    <td><strong class="text-orange">4</strong> <span class="stock-min">/ mín 5 unidad</span></td>
+                                    <td>30/09/2026</td>
+                                    <td><span class="badge status-low">Stock bajo</span></td>
+                                    <td class="actions">
+                                        <i class="fa-solid fa-pen text-pink"></i>
+                                        <i class="fa-solid fa-trash-can text-red"></i>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ================= NUEVA SECCIÓN: MOVIMIENTOS ================= -->
+                <div id="view-movimientos" class="section-view hidden">
+                    <div class="section-header" style="align-items: flex-end;">
+                        <div>
+                            <h1 style="font-family: serif; font-size: 32px; font-weight: bold; margin-bottom: 5px;">Movimientos de Stock</h1>
+                            <p class="subtitle">Registro de entradas, salidas y ajustes.</p>
+                        </div>
+                        <button class="btn" id="btn-abrir-modal"><i class="fa-solid fa-plus"></i> Registrar Movimiento</button>
+                    </div>
+
+                    <div class="movimientos-stats">
+                        <div class="mov-stat-card">
+                            <span>Total Entradas</span>
+                            <h3 class="text-green">2 <i class="fa-solid fa-arrow-trend-up"></i></h3>
+                        </div>
+                        <div class="mov-stat-card">
+                            <span>Total Salidas</span>
+                            <h3 class="text-red">3 <i class="fa-solid fa-arrow-trend-down"></i></h3>
+                        </div>
+                        <div class="mov-stat-card">
+                            <span>Total Ajustes</span>
+                            <h3 class="text-blue">0 <i class="fa-solid fa-rotate"></i></h3>
+                        </div>
+                    </div>
+
+                    <div class="table-controls" style="border-radius: 12px; margin-bottom: 20px;">
+                        <div class="table-search" style="background: white; border: 1px solid var(--border-color);">
+                            <i class="fa-solid fa-search"></i>
+                            <input type="text" placeholder="Buscar por producto...">
+                        </div>
+                        <div class="table-filters">
+                            <select style="background: var(--bg-color); border: none;">
+                                <option>Todos los tipos</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="table-container" style="border-radius: 12px;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Producto</th>
+                                    <th>Cantidad</th>
+                                    <th>Fecha</th>
+                                    <th>Usuario</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="badge status-ok" style="background: #e6ffed; color: #22863a;"><i class="fa-solid fa-arrow-up-right-dots"></i> Entrada</span></td>
+                                    <td>Labial Matte</td>
+                                    <td class="text-green" style="font-weight: bold;">+10</td>
+                                    <td>08/07/2026</td>
+                                    <td>Monserrat de los Santos Sanchéz</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge status-out" style="background: #ffeef0; color: #cb2431;"><i class="fa-solid fa-arrow-down-right-dots"></i> Salida</span></td>
+                                    <td>Sérum Vitamina C</td>
+                                    <td class="text-red" style="font-weight: bold;">-2</td>
+                                    <td>07/07/2026</td>
+                                    <td>Carlos Daniel</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge status-out" style="background: #ffeef0; color: #cb2431;"><i class="fa-solid fa-arrow-down-right-dots"></i> Salida</span></td>
+                                    <td>Base Fluida NW25</td>
+                                    <td class="text-red" style="font-weight: bold;">-1</td>
+                                    <td>06/07/2026</td>
+                                    <td>Monserrat de los Santos Sanchéz</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ================= SECCIÓN: ALERTAS ================= -->
+                <div id="view-alertas" class="section-view hidden">
+                    <div class="section-header">
+                        <h1>Centro de Alertas</h1>
+                    </div>
+                    
+                    <div class="alert-stats">
+                        <div class="stat-card">
+                            <div class="stat-icon stat-danger"><i class="fa-solid fa-circle-exclamation"></i></div>
+                            <div class="stat-info">
+                                <h3>5</h3>
+                                <p>Productos sin stock</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon stat-warning"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                            <div class="stat-info">
+                                <h3>12</h3>
+                                <p>Menos de 10 unidades</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon stat-success"><i class="fa-solid fa-boxes-stacked"></i></div>
+                            <div class="stat-info">
+                                <h3>145</h3>
+                                <p>Niveles óptimos</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert-list">
+                        <h3 class="alert-list-title">Detalle de Atención Inmediata</h3>
+                        
+                        <div class="alert-item">
+                            <div class="alert-text">
+                                <span class="badge status-out" style="width: auto; padding: 6px 12px; margin-right: 10px;">Urgente</span>
+                                <span><strong>Rímel Black Out</strong> se ha agotado por completo.</span>
+                            </div>
+                            <button class="btn">Reabastecer</button>
+                        </div>
+                        
+                        <div class="alert-item">
+                            <div class="alert-text">
+                                <span class="badge status-warn" style="width: auto; padding: 6px 12px; margin-right: 10px;">Precaución</span>
+                                <span><strong>Labial Rojo Pasión</strong> a punto de agotarse (3 pz restantes).</span>
+                            </div>
+                            <button class="btn">Reabastecer</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= SECCIÓN: MI CUENTA (ACTUALIZADA A PERFIL) ================= -->
+                <div id="view-cuenta" class="section-view hidden">
+                    
+                    <div class="perfil-layout">
+                        <!-- Columna Izquierda: Info Usuario y Stats -->
+                        <div class="perfil-info-col">
+                            <h2 style="font-family: serif; font-size: 24px; font-weight: bold; margin-bottom: 30px;">Perfil de Usuario</h2>
+                            
+                            <div class="user-header-info">
+                                <img src="https://i.pravatar.cc/150?img=11" alt="Avatar" class="avatar-perfil">
+                                <div class="user-details-text">
+                                    <h3>David de Jesús Cruz Santiago</h3>
+                                    <p class="email-text">david.cruz@gmail.com</p>
+                                    <p class="role-text">Administrador</p>
+                                </div>
+                            </div>
+
+                            <div class="perfil-stats-grid">
+                                <div class="p-stat-box">Productos<br>registrados</div>
+                                <div class="p-stat-box">Poco stock /<br>Agotados</div>
+                                <div class="p-stat-box">Entradas/<br>salidas</div>
+                                <div class="p-stat-box">Categorías<br>Activas</div>
+                            </div>
+                        </div>
+
+                        <!-- Columna Derecha: Settings -->
+                        <div class="perfil-settings-col">
+                            <h2 style="font-family: serif; font-size: 24px; font-weight: bold; margin-bottom: 30px;">Settings</h2>
+                            
+                            <div class="setting-row">
+                                <div class="setting-text">
+                                    <strong style="display: block; margin-bottom: 5px;">Permisos clave</strong>
+                                    <p>Editar la información del negocio y proveedores.</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-row">
+                                <div class="setting-text">
+                                    <p>Crear, modificar y eliminar usuarios.</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-row">
+                                <div class="setting-text">
+                                    <p>Validar registros de los empleados.</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="setting-row" style="border-bottom: none;">
+                                <div class="setting-text">
+                                    <p>Añadir, editar y borrar registros de stock.</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- ================= MODAL: REGISTRO DE ENTRADAS ================= -->
+    <div id="modal-registro" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 style="font-family: serif; font-size: 28px;">Registro de entradas</h2>
+                <button class="btn-close" id="btn-cerrar-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="form-fields-modal">
+                    <div class="field-row">
+                        <strong>Marca</strong>
+                        <div class="mock-input">Producto</div>
+                    </div>
+                    <div class="field-row">
+                        <strong>Categoría</strong>
+                        <div class="mock-input">Maquillaje</div>
+                    </div>
+                    <div class="field-row">
+                        <strong>Stock actual</strong>
+                        <div class="mock-input">24 productos disponibles</div>
+                    </div>
+                </div>
+                
+                <div class="image-upload-box">
+                    <i class="fa-solid fa-plus"></i>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn" id="btn-guardar-modal" style="width: 150px;">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script -->
     <script src="app.js"></script>
 </body>
 </html>
