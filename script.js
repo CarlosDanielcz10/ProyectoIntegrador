@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // ================= DATOS GLOBALES =================
     let marcas = ["MAC", "The Ordinary", "L'Oréal", "CeraVe", "NARS"];
     let categorias = ["Maquillaje", "Skincare", "Fragancias"];
 
@@ -24,8 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentUser = null;
     let productoEditandoId = null;
 
-    // ================= HELPER CADUCIDAD =================
-    // Retorna los días exactos para ser usado en la interfaz
     function evaluarCaducidad(caducidadDate) {
         if(!caducidadDate) return { isVencido: false, isProximo: false, text: "N/A", days: 999, dateStr: "" };
         const hoy = new Date("2026-07-13T00:00:00"); 
@@ -48,7 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return { isVencido, isProximo, text, days: diffDays, dateStr: cad.toLocaleDateString('es-ES') };
     }
 
-    // ================= LOGIN / REGISTRO / ROLES =================
     const loginForm = document.getElementById('login-form');
     const registerForm = document.getElementById('register-form');
     const loginView = document.getElementById('login-view');
@@ -72,7 +68,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (respuesta.ok) {
                 const usuarioBD = await respuesta.json();
                 
-                // Generar iniciales a partir del nombre recibido
                 usuarioBD.initials = usuarioBD.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
                 
                 currentUser = usuarioBD;
@@ -105,15 +100,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('modal-usuarios').classList.add('hidden');
                 
                 if(!loginView.classList.contains('hidden')) {
-                    // Si se registró desde el login, simula click para volver a Iniciar Sesión
                     document.getElementById('btn-show-login').click();
                 } else {
-                    // Si el Admin lo registró desde adentro, recarga la tabla
                     renderUsuariosAdmin();
                 }
             } else {
                 const error = await respuesta.text();
-                alert(error); // Mostrará "El correo ya está registrado en el sistema."
+                alert(error);
             }
         } catch (error) {
             alert("Error al conectar con el servidor backend.");
@@ -135,7 +128,6 @@ document.addEventListener('DOMContentLoaded', () => {
         inicializarDashboard();
     }
 
-    // ================= FUNCIONALIDAD DE TOGGLES =================
     function configurarToggles() {
         const adminToggles = ['perm-admin-0', 'perm-admin-1'];
         adminToggles.forEach((id, idx) => {
@@ -209,7 +201,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     configurarToggles(); 
 
-    // ================= EDITAR PERFIL (EL LAPIZ) =================
     const modalEditarPerfil = document.getElementById('modal-editar-perfil');
     const formEditarPerfil = document.getElementById('form-editar-perfil');
     
@@ -235,8 +226,6 @@ document.addEventListener('DOMContentLoaded', () => {
         actualizarUIUsuario(); 
     });
 
-
-    // ================= AVATAR UPLOAD =================
     const avatarInput = document.getElementById('avatar-upload');
     const perfilBtn = document.getElementById('perfil-avatar-btn');
 
@@ -267,7 +256,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // ================= BUSCADOR GLOBAL Y NAVEGACIÓN =================
     const globalSearch = document.getElementById('global-search');
     globalSearch.addEventListener('keyup', (e) => {
         if(e.key === 'Enter') {
@@ -322,7 +310,6 @@ document.addEventListener('DOMContentLoaded', () => {
         dateElement.textContent = dateString.charAt(0).toUpperCase() + dateString.slice(1);
     }
 
-    // ================= RENDERIZADO INVENTARIO Y ALERTAS =================
     const tbodyInventario = document.getElementById('tbody-inventario');
     const searchInventario = document.getElementById('search-inventario');
     const filterCategoria = document.getElementById('filter-categoria');
@@ -346,7 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         filtrados.forEach(p => {
             let cad = evaluarCaducidad(p.caducidad);
-            let isOut = p.stock === 0; // Agotado anula todo lo demás visualmente
+            let isOut = p.stock === 0;
             let isLow = (!isOut) && (p.stock < p.min || cad.isProximo || cad.isVencido);
 
             if (isOut) agotados++; else if (isLow) bajos++;
@@ -392,7 +379,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Regla de ocultar vencidos si el stock es cero aplicada al centro de alertas
     function renderAlertasDetalle() {
         const lists = [document.getElementById('widget-alertas-inicio'), document.getElementById('widget-alertas-centro')];
         lists.forEach(container => {
@@ -423,7 +409,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if(searchInventario) searchInventario.addEventListener('input', renderInventario);
     if(filterCategoria) filterCategoria.addEventListener('change', renderInventario);
 
-    // ================= MOVIMIENTOS =================
     const tbodyMov = document.getElementById('tbody-movimientos');
     const searchMov = document.getElementById('search-movimientos');
     
@@ -447,8 +432,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if(searchMov) searchMov.addEventListener('input', renderMovimientos);
 
-
-    // ================= MODALES Y FUNCIONALIDADES =================
     const modalProd = document.getElementById('modal-producto');
     const formProd = document.getElementById('form-producto');
     const modalMov = document.getElementById('modal-movimiento');
@@ -526,7 +509,6 @@ document.addEventListener('DOMContentLoaded', () => {
         formMov.reset(); modalMov.classList.remove('hidden');
     }
 
-    // Validación limitante agregada a las entradas de producto
     if(formMov) {
         formMov.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -542,15 +524,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Funciones Extra de ADMIN conectadas a SQL Server
-    let usuariosBD = []; // Variable temporal para la tabla
+    let usuariosBD = [];
 
     window.abrirModalUsuarios = async function() {
         if(currentUser.role === 'Administrador' && !currentUser.permissions[0]) {
             return alert("Permiso denegado: No tienes habilitado crear, modificar y eliminar usuarios.");
         }
         
-        // Petición a la base de datos para obtener a todos
         try {
             const respuesta = await fetch('http://localhost:5000/api/usuarios');
             if (respuesta.ok) {
@@ -566,7 +546,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderUsuariosAdmin() {
         const tbody = document.getElementById('tbody-usuarios');
         tbody.innerHTML = "";
-        // Renderizamos los datos reales de SQL
         usuariosBD.forEach((u) => {
             tbody.innerHTML += `<tr>
                 <td><strong>${u.name}</strong></td>
@@ -582,13 +561,11 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if(confirm(`¿Estás seguro de eliminar el acceso de ${emailAEliminar}?`)) {
             try {
-                // Le decimos a C# que borre a este usuario
                 const respuesta = await fetch(`http://localhost:5000/api/usuarios/${emailAEliminar}`, {
                     method: 'DELETE'
                 });
 
                 if (respuesta.ok) {
-                    // Refrescamos la tabla volviendo a llamar a abrirModalUsuarios
                     alert("Usuario eliminado de la base de datos.");
                     abrirModalUsuarios(); 
                 } else {
@@ -619,7 +596,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('nueva-cat').value = ""; renderFiltros(); alert("Categoría añadida.");
     });
 
-    // Inicializador Maestro
     function inicializarDashboard() {
         renderFiltros();
         renderInventario();
