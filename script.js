@@ -7,7 +7,15 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 1, sku: "401255", nombre: "Base Líquida Matte", marca: "MAC", categoria: "Maquillaje", caducidad: "2027-12-01", precio: 350.00, stock: 12, min: 5 },
         { id: 2, sku: "309411", nombre: "Sérum Vitamina C", marca: "The Ordinary", categoria: "Skincare", caducidad: "2026-08-15", precio: 420.00, stock: 3, min: 8 },
         { id: 3, sku: "110293", nombre: "Máscara de Pestañas", marca: "L'Oréal", categoria: "Maquillaje", caducidad: "2025-12-20", precio: 280.00, stock: 15, min: 10 },
-        { id: 4, sku: "789102", nombre: "Crema Hidratante SPF30", marca: "CeraVe", categoria: "Skincare", caducidad: "2027-03-15", precio: 520.00, stock: 0, min: 6 } 
+        { id: 4, sku: "789102", nombre: "Crema Hidratante SPF30", marca: "CeraVe", categoria: "Skincare", caducidad: "2027-03-15", precio: 520.00, stock: 0, min: 6 },
+        { id: 5, sku: "401256", nombre: "Base Líquida Matte", marca: "MAC", categoria: "Maquillaje", caducidad: "2028-01-15", precio: 350.00, stock: 8, min: 5 } // Producto de prueba para mostrar agrupación
+    ];
+
+    let lotesInventario = [
+        { sku: "401255", cantidad: 12, caducidad: "2027-12-01" },
+        { sku: "309411", cantidad: 3, caducidad: "2026-08-15" },
+        { sku: "110293", cantidad: 15, caducidad: "2025-12-20" },
+        { sku: "401256", cantidad: 8, caducidad: "2028-01-15" }
     ];
 
     let movimientos = [
@@ -20,8 +28,25 @@ document.addEventListener('DOMContentLoaded', () => {
         { email: "empleado@glowstock.com", pass: "12345", name: "Ana Pérez", role: "Empleado", avatar: "", initials: "AP", permissions: [true] }
     ];
 
+    let globalConfig = {
+        blockEntradas: false,
+        blockSalidas: false
+    };
+
     let currentUser = null;
     let productoEditandoId = null;
+
+    // MODIFICACIÓN: Lógica de Modo Oscuro
+    const toggleDarkMode = document.getElementById('toggle-dark-mode');
+    if(toggleDarkMode) {
+        toggleDarkMode.addEventListener('change', (e) => {
+            if(e.target.checked) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+        });
+    }
 
     function evaluarCaducidad(caducidadDate) {
         if(!caducidadDate) return { isVencido: false, isProximo: false, text: "N/A", days: 999, dateStr: "" };
@@ -33,14 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let isVencido = diffDays < 0;
         let isProximo = diffDays >= 0 && diffDays <= 90;
         
-        let text = "";
-        if (isVencido) text = "Vencido";
-        else if (isProximo) {
-            if (diffDays === 0) text = "Vence hoy";
-            else if (diffDays <= 7) text = `Vence en ${diffDays} días`;
-            else text = "Próx. a vencer";
-        }
-        else text = cad.toLocaleDateString('es-ES');
+        let text = cad.toLocaleDateString('es-ES');
         
         return { isVencido, isProximo, text, days: diffDays, dateStr: cad.toLocaleDateString('es-ES') };
     }
@@ -67,9 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (respuesta.ok) {
                 const usuarioBD = await respuesta.json();
-                
                 usuarioBD.initials = usuarioBD.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
-                
                 currentUser = usuarioBD;
                 entrarAlSistema();
             } else {
@@ -119,6 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
         dashboardView.classList.add('hidden');
         loginView.classList.remove('hidden');
         loginForm.reset(); registerForm.reset();
+        document.body.classList.remove('role-empleado');
     });
 
     function entrarAlSistema() {
@@ -129,33 +146,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function configurarToggles() {
-        const adminToggles = ['perm-admin-0', 'perm-admin-1'];
-        adminToggles.forEach((id, idx) => {
-            const el = document.getElementById(id);
-            if(el) {
-                el.addEventListener('change', (e) => {
-                    if(currentUser && currentUser.role === 'Administrador') {
-                        currentUser.permissions[idx] = e.target.checked;
-                        el.parentElement.previousElementSibling.style.opacity = e.target.checked ? '1' : '0.4';
-                        el.parentElement.previousElementSibling.style.textDecoration = e.target.checked ? 'none' : 'line-through';
-                    }
-                });
-            }
-        });
+        const toggleEntradas = document.getElementById('block-entradas');
+        const toggleSalidas = document.getElementById('block-salidas');
 
-        const empToggles = ['perm-emp-0'];
-        empToggles.forEach((id, idx) => {
-            const el = document.getElementById(id);
-            if(el) {
-                el.addEventListener('change', (e) => {
-                    if(currentUser && currentUser.role === 'Empleado') {
-                        currentUser.permissions[idx] = e.target.checked;
-                        el.parentElement.previousElementSibling.style.opacity = e.target.checked ? '1' : '0.4';
-                        el.parentElement.previousElementSibling.style.textDecoration = e.target.checked ? 'none' : 'line-through';
-                    }
-                });
-            }
-        });
+        if(toggleEntradas) {
+            toggleEntradas.addEventListener('change', (e) => {
+                globalConfig.blockEntradas = e.target.checked;
+            });
+        }
+        if(toggleSalidas) {
+            toggleSalidas.addEventListener('change', (e) => {
+                globalConfig.blockSalidas = e.target.checked;
+            });
+        }
     }
 
     function actualizarUIUsuario() {
@@ -168,35 +171,20 @@ document.addEventListener('DOMContentLoaded', () => {
         setAvatarUI(currentUser.avatar, currentUser.initials);
 
         const adminEls = document.querySelectorAll('.admin-only');
-        const adminToggles = ['perm-admin-0', 'perm-admin-1'];
-        const empToggles = ['perm-emp-0'];
-
+        
         if(currentUser.role === 'Administrador') {
+            document.body.classList.remove('role-empleado');
             adminEls.forEach(el => el.classList.remove('hidden'));
             document.getElementById('settings-admin').classList.remove('hidden');
             document.getElementById('settings-empleado').classList.add('hidden');
             
-            adminToggles.forEach((id, idx) => {
-                const el = document.getElementById(id);
-                if(el) {
-                    el.checked = currentUser.permissions[idx];
-                    el.parentElement.previousElementSibling.style.opacity = currentUser.permissions[idx] ? '1' : '0.4';
-                    el.parentElement.previousElementSibling.style.textDecoration = currentUser.permissions[idx] ? 'none' : 'line-through';
-                }
-            });
+            document.getElementById('block-entradas').checked = globalConfig.blockEntradas;
+            document.getElementById('block-salidas').checked = globalConfig.blockSalidas;
         } else {
+            document.body.classList.add('role-empleado');
             adminEls.forEach(el => el.classList.add('hidden'));
             document.getElementById('settings-admin').classList.add('hidden');
             document.getElementById('settings-empleado').classList.remove('hidden');
-            
-            empToggles.forEach((id, idx) => {
-                const el = document.getElementById(id);
-                if(el) {
-                    el.checked = currentUser.permissions[idx];
-                    el.parentElement.previousElementSibling.style.opacity = currentUser.permissions[idx] ? '1' : '0.4';
-                    el.parentElement.previousElementSibling.style.textDecoration = currentUser.permissions[idx] ? 'none' : 'line-through';
-                }
-            });
         }
     }
     configurarToggles(); 
@@ -264,20 +252,13 @@ document.addEventListener('DOMContentLoaded', () => {
             
             let prod = productos.find(p => p.sku === val);
             if(prod) {
-                abrirModalProducto(prod.id);
+                document.querySelector('[data-target="view-inventario"]').click();
+                document.getElementById('search-inventario').value = prod.sku;
+                renderInventario();
                 globalSearch.value = "";
                 return;
             }
-
-            let usr = usuarios.find(u => u.name.toLowerCase().includes(val));
-            if(usr) {
-                document.querySelector('[data-target="view-movimientos"]').click();
-                document.getElementById('search-movimientos').value = usr.name;
-                renderMovimientos();
-                globalSearch.value = "";
-                return;
-            }
-            alert("No se encontró ningún SKU exacto ni empleado con ese nombre.");
+            alert("No se encontró ningún producto con ese SKU.");
         }
     });
 
@@ -323,12 +304,28 @@ document.addEventListener('DOMContentLoaded', () => {
         const term = searchInventario.value.toLowerCase();
         const cat = filterCategoria.value;
         tbodyInventario.innerHTML = "";
+        
         let agotados = 0, bajos = 0;
+        let kpiTotalPiezas = 0;
+        let kpiValorTotal = 0;
+
+        productos.forEach(p => {
+            kpiTotalPiezas += p.stock;
+            kpiValorTotal += (p.stock * parseFloat(p.precio));
+        });
 
         let filtrados = productos.filter(p => {
             const matchText = p.nombre.toLowerCase().includes(term) || p.sku.toLowerCase().includes(term);
             const matchCat = cat === "Todas" || p.categoria === cat;
             return matchText && matchCat;
+        });
+
+        // MODIFICACIÓN: Agrupar por Nombre Alfabético y luego por Caducidad
+        filtrados.sort((a, b) => {
+            let nameCompare = a.nombre.localeCompare(b.nombre);
+            if (nameCompare !== 0) return nameCompare;
+            // Si el nombre es el mismo, ordenamos por caducidad (del más viejo al más nuevo)
+            return new Date(a.caducidad) - new Date(b.caducidad);
         });
 
         filtrados.forEach(p => {
@@ -344,21 +341,21 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 if(cad.isVencido) badgeState += `<span class="badge status-out">Vencido</span> `;
                 if(p.stock > 0 && p.stock < p.min) badgeState += `<span class="badge status-warn">Stock bajo</span> `;
-                if(!cad.isVencido && cad.isProximo) badgeState += `<span class="badge status-warn">${cad.text}</span> `;
+                if(!cad.isVencido && cad.isProximo) badgeState += `<span class="badge status-warn">Próx. a vencer</span> `;
                 if(!cad.isVencido && !cad.isProximo && p.stock >= p.min) badgeState = `<span class="badge status-ok">OK</span>`;
             }
             
             let actionHtml = currentUser && currentUser.role === 'Administrador' 
                 ? `<i class="fa-solid fa-pen text-pink btn-editar" data-id="${p.id}"></i><i class="fa-solid fa-trash-can text-red btn-eliminar" data-id="${p.id}"></i>` 
                 : `<i class="fa-solid fa-lock text-muted" title="Sin permisos"></i>`;
-
+            
             tbodyInventario.innerHTML += `
                 <tr>
                     <td><strong>${p.nombre}</strong><span>SKU: ${p.sku}</span></td>
                     <td>${p.marca}</td>
                     <td><span class="badge cat-badge">${p.categoria}</span></td>
                     <td>${cad.text}</td>
-                    <td>$${parseFloat(p.precio).toFixed(2)}</td>
+                    <td class="admin-only">$${parseFloat(p.precio).toFixed(2)}</td>
                     <td><strong>${p.stock}</strong> <span class="stock-min">/ mín ${p.min}</span></td>
                     <td>${badgeState}</td>
                     <td class="actions">${actionHtml}</td>
@@ -371,6 +368,11 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('dash-alertas').textContent = agotados + bajos;
         document.getElementById('alert-agotados').textContent = agotados;
         document.getElementById('alert-bajos').textContent = bajos;
+        
+        document.getElementById('inv-total-piezas').textContent = kpiTotalPiezas;
+        document.getElementById('inv-alertas-kpi').textContent = agotados + bajos;
+        document.getElementById('inv-valor-total').textContent = "$" + kpiValorTotal.toLocaleString('es-MX', {minimumFractionDigits: 2});
+
         renderAlertasDetalle();
 
         if(currentUser && currentUser.role === 'Administrador'){
@@ -397,7 +399,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         container.innerHTML += `<div class="list-item item-orange"><i class="fa-solid fa-box"></i><div><strong>${p.nombre}</strong><span>Stock bajo: ${p.stock} pz</span></div></div>`;
                     }
                     if (!cad.isVencido && cad.isProximo) {
-                        let txtFinal = cad.days <= 7 ? cad.text : `Próximo a vencer (${cad.dateStr})`;
+                        let txtFinal = cad.days <= 7 ? "Vence en pocos días" : `Próximo a vencer (${cad.dateStr})`;
                         container.innerHTML += `<div class="list-item item-orange"><i class="fa-solid fa-calendar-day"></i><div><strong>${p.nombre}</strong><span>${txtFinal}</span></div></div>`;
                     }
                 }
@@ -408,6 +410,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if(searchInventario) searchInventario.addEventListener('input', renderInventario);
     if(filterCategoria) filterCategoria.addEventListener('change', renderInventario);
+
+    function renderHistorialTurno() {
+        const container = document.getElementById('lista-historial-turno');
+        if(!container) return;
+        container.innerHTML = '';
+        
+        let misMovs = movimientos.filter(m => m.usuario === currentUser.name);
+        if(misMovs.length === 0) {
+            container.innerHTML = '<p style="font-size: 14px; color: var(--text-muted); text-align: center; margin-top: 10px;">No has realizado movimientos en este turno.</p>';
+        } else {
+            misMovs.forEach(m => {
+                let color = m.tipo === 'Entrada' ? 'var(--success-text)' : 'var(--danger-text)';
+                let sign = m.tipo === 'Entrada' ? '+' : '-';
+                container.innerHTML += `
+                    <div style="display:flex; justify-content:space-between; align-items: center; font-size:13px; padding: 12px 0; border-bottom: 1px solid var(--border-color);">
+                        <span style="color: var(--text-dark);"><strong>${m.nombre}</strong> <span style="color:var(--text-muted);">(${m.tipo})</span></span>
+                        <strong style="color: ${color}; font-size: 15px;">${sign}${m.cantidad}</strong>
+                    </div>
+                `;
+            });
+        }
+    }
 
     const tbodyMov = document.getElementById('tbody-movimientos');
     const searchMov = document.getElementById('search-movimientos');
@@ -429,6 +453,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('stat-entradas').textContent = ent;
         document.getElementById('stat-salidas').textContent = sal;
         document.getElementById('dash-movimientos').textContent = movimientos.length;
+
+        if(currentUser && currentUser.role === 'Empleado') renderHistorialTurno();
     }
     if(searchMov) searchMov.addEventListener('input', renderMovimientos);
 
@@ -439,6 +465,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('btn-nuevo-producto')?.addEventListener('click', () => abrirModalProducto(null));
     document.getElementById('btn-registrar-mov')?.addEventListener('click', abrirModalMovimiento);
+
+    const prodSkuInput = document.getElementById('prod-sku');
+    if(prodSkuInput) {
+        prodSkuInput.addEventListener('input', (e) => {
+            if(productoEditandoId) return; 
+            let val = e.target.value.trim();
+            let prod = productos.find(p => p.sku === val);
+            if(prod) {
+                document.getElementById('prod-nombre').value = prod.nombre;
+                document.getElementById('prod-marca').value = prod.marca;
+                document.getElementById('prod-categoria').value = prod.categoria;
+                document.getElementById('prod-precio').value = prod.precio;
+                document.getElementById('prod-min').value = prod.min;
+            }
+        });
+    }
     
     function actualizarSelectsProducto() {
         const sMarca = document.getElementById('prod-marca');
@@ -449,12 +491,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function abrirModalProducto(id) {
-        if(currentUser.role === 'Administrador' && !currentUser.permissions[1]) {
-            return alert("Permiso denegado: No tienes habilitado añadir, editar y borrar registros de stock.");
-        } else if (currentUser.role === 'Empleado') {
-            return alert("Solo un Administrador puede crear o editar productos.");
-        }
-
         productoEditandoId = id;
         actualizarSelectsProducto();
         if (id) {
@@ -473,9 +509,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function eliminarProducto(id) {
-        if(currentUser.role === 'Administrador' && !currentUser.permissions[1]) {
-            return alert("Permiso denegado: No tienes habilitado añadir, editar y borrar registros de stock.");
-        }
         if(confirm("¿Eliminar este producto?")) { productos = productos.filter(p => p.id !== id); renderInventario(); }
     }
 
@@ -492,33 +525,69 @@ document.addEventListener('DOMContentLoaded', () => {
                 stock: parseInt(document.getElementById('prod-stock').value), 
                 min: parseInt(document.getElementById('prod-min').value)
             };
-            if (productoEditandoId) { let i = productos.findIndex(x => x.id === productoEditandoId); productos[i] = { ...productos[i], ...p }; } 
-            else { p.id = Date.now(); productos.push(p); }
+            if (productoEditandoId) { 
+                let i = productos.findIndex(x => x.id === productoEditandoId); productos[i] = { ...productos[i], ...p }; 
+            } else { 
+                p.id = Date.now(); 
+                productos.push(p); 
+                lotesInventario.push({ sku: p.sku, cantidad: p.stock, caducidad: p.caducidad });
+            }
             modalProd.classList.add('hidden'); renderInventario();
         });
     }
 
-    function abrirModalMovimiento() {
-        if(currentUser.role === 'Empleado' && !currentUser.permissions[0]) {
-            return alert("Permiso denegado: No tienes habilitado actualizar el inventario cuando llega o se vende mercancía.");
-        }
+    document.getElementById('mov-tipo').addEventListener('change', (e) => {
+        document.getElementById('row-caducidad-mov').style.display = e.target.value === 'Entrada' ? 'flex' : 'none';
+    });
 
+    function abrirModalMovimiento() {
         const selectProd = document.getElementById('mov-producto');
         selectProd.innerHTML = "";
         productos.forEach(p => selectProd.innerHTML += `<option value="${p.id}">${p.nombre} (Stock: ${p.stock})</option>`);
-        formMov.reset(); modalMov.classList.remove('hidden');
+        formMov.reset(); 
+        document.getElementById('row-caducidad-mov').style.display = 'flex'; 
+        modalMov.classList.remove('hidden');
     }
 
     if(formMov) {
         formMov.addEventListener('submit', (e) => {
             e.preventDefault();
-            const tipo = document.getElementById('mov-tipo').value, prodId = parseInt(document.getElementById('mov-producto').value), cant = parseInt(document.getElementById('mov-cantidad').value);
+            const tipo = document.getElementById('mov-tipo').value;
+            const prodId = parseInt(document.getElementById('mov-producto').value);
+            const cant = parseInt(document.getElementById('mov-cantidad').value);
+            
+            if(currentUser.role === 'Empleado') {
+                if(tipo === 'Entrada' && globalConfig.blockEntradas) return alert("Acceso denegado: El administrador ha bloqueado temporalmente el registro de entradas.");
+                if(tipo === 'Salida' && globalConfig.blockSalidas) return alert("Acceso denegado: El administrador ha bloqueado temporalmente el registro de salidas.");
+            }
+
             let prod = productos.find(p => p.id === prodId);
             
             if (tipo === "Salida" && cant > prod.stock) return alert("No hay suficiente stock.");
-            if (tipo === "Entrada" && (prod.stock + cant > 5000)) return alert(`Advertencia: El límite de producto es de 5000 pz. Este movimiento haría que tu stock final sea de ${prod.stock + cant}.`);
+            if (tipo === "Entrada" && (prod.stock + cant > 5000)) return alert(`Advertencia: El límite de producto es de 5000 pz.`);
             
-            if (tipo === "Entrada") prod.stock += cant; else prod.stock -= cant;
+            if (tipo === "Entrada") {
+                let nuevaCad = document.getElementById('mov-caducidad').value || prod.caducidad;
+                lotesInventario.push({ sku: prod.sku, cantidad: cant, caducidad: nuevaCad });
+                prod.stock += cant;
+            } else {
+                let lotesDelProducto = lotesInventario.filter(l => l.sku === prod.sku && l.cantidad > 0);
+                lotesDelProducto.sort((a, b) => new Date(a.caducidad) - new Date(b.caducidad)); 
+
+                let cantidadRestante = cant;
+                for(let lote of lotesDelProducto) {
+                    if(cantidadRestante === 0) break;
+                    if(lote.cantidad >= cantidadRestante) {
+                        lote.cantidad -= cantidadRestante;
+                        cantidadRestante = 0;
+                    } else {
+                        cantidadRestante -= lote.cantidad;
+                        lote.cantidad = 0;
+                    }
+                }
+                prod.stock -= cant;
+            }
+
             movimientos.unshift({ id: Date.now(), tipo: tipo, productoId: prod.id, nombre: prod.nombre, cantidad: cant, fecha: new Date().toLocaleDateString('es-ES', {day: '2-digit', month: '2-digit', year: 'numeric'}), usuario: currentUser.name });
             modalMov.classList.add('hidden'); renderInventario(); renderMovimientos();
         });
@@ -527,10 +596,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let usuariosBD = [];
 
     window.abrirModalUsuarios = async function() {
-        if(currentUser.role === 'Administrador' && !currentUser.permissions[0]) {
-            return alert("Permiso denegado: No tienes habilitado crear, modificar y eliminar usuarios.");
-        }
-        
         try {
             const respuesta = await fetch('http://localhost:5000/api/usuarios');
             if (respuesta.ok) {
@@ -600,6 +665,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderFiltros();
         renderInventario();
         renderMovimientos();
+        if(currentUser && currentUser.role === 'Empleado') renderHistorialTurno();
     }
-
 });

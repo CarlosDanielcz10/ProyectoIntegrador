@@ -29,7 +29,7 @@
                 </div>
                 <button type="submit" class="btn login-btn">Iniciar Sesión</button>
             </form>
-            <div class="toggle-form-text">
+            <div class="toggle-form-text" style="display: none;">
                 ¿No tienes cuenta? <span id="btn-show-register" class="text-pink">Crear una cuenta</span>
             </div>
         </div>
@@ -94,7 +94,7 @@
                     <button class="menu-toggle" id="menu-toggle"><i class="fa-solid fa-bars"></i></button>
                     <div class="search-bar hide-on-mobile">
                         <i class="fa-solid fa-search"></i>
-                        <input type="text" id="global-search" placeholder="Buscar SKU para editar o Empleado...">
+                        <input type="text" id="global-search" placeholder="Escanear o ingresar SKU...">
                     </div>
                 </div>
                 <div class="user-info">
@@ -113,6 +113,7 @@
 
             <div class="content-area">
 
+                <!-- [LAS VISTAS DE INICIO, INVENTARIO, MOVIMIENTOS Y ALERTAS PERMANECEN EXACTAMENTE IGUAL HASTA LLEGAR A LA VISTA CUENTA] -->
                 <div id="view-inicio" class="section-view">
                     <div class="welcome-header">
                         <h1 class="font-title">Bienvenido</h1>
@@ -145,7 +146,6 @@
                                 <a href="#" onclick="document.querySelector('[data-target=\'view-alertas\']').click()">Ver todas &rarr;</a>
                             </div>
                             <div class="widget-list" id="widget-alertas-inicio">
-                                <!-- Llenado por JS -->
                             </div>
                         </div>
 
@@ -177,6 +177,24 @@
                         <button class="btn admin-only" id="btn-nuevo-producto"><i class="fa-solid fa-plus"></i> Nuevo Producto</button>
                     </div>
 
+                    <div class="summary-cards" style="margin-bottom: 25px;">
+                        <div class="sum-card card-main">
+                            <div class="card-info"><span>Total Piezas Físicas</span><h3 id="inv-total-piezas">0</h3></div>
+                            <div class="card-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
+                        </div>
+                        <div class="sum-card card-orange">
+                            <div class="card-info"><span>Stock Bajo / Vencido</span><h3 id="inv-alertas-kpi">0</h3></div>
+                            <div class="card-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                        </div>
+                        <div class="sum-card card-green admin-only" id="card-valor-inv">
+                            <div class="card-info" style="width: 100%;">
+                                <span>Valor Total Inventario</span>
+                                <h3 id="inv-valor-total" style="font-size: 26px; word-break: break-all; margin-right: 10px;">$0.00</h3>
+                            </div>
+                            <div class="card-icon"><i class="fa-solid fa-sack-dollar"></i></div>
+                        </div>
+                    </div>
+
                     <div class="table-controls mobile-col">
                         <div class="table-search">
                             <i class="fa-solid fa-search"></i>
@@ -193,7 +211,7 @@
                         <table class="data-table">
                             <thead>
                                 <tr>
-                                    <th>Producto / SKU</th><th>Marca</th><th>Categoría</th><th>Caducidad</th><th>Precio</th><th>Stock</th><th>Estado</th><th>Acciones</th>
+                                    <th>Producto / SKU</th><th>Marca</th><th>Categoría</th><th>Caducidad</th><th id="th-costo" class="admin-only">Costo Unit.</th><th>Stock</th><th>Estado</th><th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody id="tbody-inventario"></tbody>
@@ -263,7 +281,6 @@
 
                 <div id="view-cuenta" class="section-view hidden">
                     <div class="perfil-layout">
-                        <!-- Info Usuario -->
                         <div class="perfil-info-col">
                             <h2 class="font-title" style="margin-bottom: 30px;">Perfil de Usuario</h2>
                             <div class="user-header-info">
@@ -283,30 +300,53 @@
                             </div>
 
                             <div class="perfil-stats-grid">
-                                <div class="p-stat-box" onclick="document.querySelector('[data-target=\'view-inventario\']').click()">Productos<br>registrados</div>
+                                <!-- MODIFICACIÓN: Se ocultó "Productos Registrados" al rol empleado añadiendo la clase 'admin-only' -->
+                                <div class="p-stat-box admin-only" onclick="document.querySelector('[data-target=\'view-inventario\']').click()">Productos<br>registrados</div>
                                 <div class="p-stat-box admin-only" onclick="abrirModalCategorias()">Categorías / Marcas<br>Activas</div>
                                 <div class="p-stat-box admin-only" onclick="abrirModalUsuarios()">Agregar, editar y<br>eliminar usuarios</div>
+                            </div>
+                            
+                            <!-- MODIFICACIÓN: Contenedor Historial movido aquí (Solo visible para empleados) -->
+                            <div class="empleado-only" style="margin-top: 20px;">
+                                <strong style="display: block; margin-bottom: 10px; color: var(--text-dark); font-family: 'Playfair Display', serif; font-size: 18px;">Historial de Turno Activo</strong>
+                                <div id="lista-historial-turno" style="background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; max-height: 250px; overflow-y: auto;">
+                                    <!-- Llenado por JS -->
+                                </div>
                             </div>
                         </div>
 
                         <div class="perfil-settings-col">
                             <h2 class="font-title" style="margin-bottom: 30px;">Settings</h2>
                             
+                            <!-- MODIFICACIÓN: Toggle global de Modo Oscuro para ambos roles -->
+                            <div class="setting-row" style="border-bottom: 1px solid var(--border-color);">
+                                <div class="setting-text"><p>Activar <strong>Modo Oscuro</strong> en la interfaz.</p></div>
+                                <label class="switch"><input type="checkbox" id="toggle-dark-mode"><span class="slider round"></span></label>
+                            </div>
+
                             <div id="settings-admin" class="hidden">
                                 <div class="setting-row">
-                                    <div class="setting-text"><p>Crear, modificar y eliminar usuarios.</p></div>
-                                    <label class="switch"><input type="checkbox" id="perm-admin-0"><span class="slider round"></span></label>
+                                    <div class="setting-text"><p>Bloquear registro de <strong>Entradas</strong> para Empleados.</p></div>
+                                    <label class="switch"><input type="checkbox" id="block-entradas"><span class="slider round"></span></label>
                                 </div>
                                 <div class="setting-row" style="border-bottom: none;">
-                                    <div class="setting-text"><p>Añadir, editar y borrar registros de stock.</p></div>
-                                    <label class="switch"><input type="checkbox" id="perm-admin-1"><span class="slider round"></span></label>
+                                    <div class="setting-text"><p>Bloquear registro de <strong>Salidas / Mermas</strong> para Empleados.</p></div>
+                                    <label class="switch"><input type="checkbox" id="block-salidas"><span class="slider round"></span></label>
                                 </div>
                             </div>
 
                             <div id="settings-empleado" class="hidden">
+                                <!-- CÓDIGO VIEJO COMENTADO (NO BORRADO) -->
+                                <!-- 
+                                <div class="setting-row" style="border-bottom: none; display: block;">
+                                    <div class="setting-text">
+                                        <strong style="display: block; margin-bottom: 10px; color: var(--text-dark);">Historial de Turno Activo</strong>
+                                        <div id="lista-historial-turno-viejo" style="..."></div>
+                                    </div>
+                                </div>
+                                -->
                                 <div class="setting-row" style="border-bottom: none;">
-                                    <div class="setting-text"><strong style="display: block; margin-bottom: 5px;">Permisos clave</strong><p>Actualiza el inventario cuando llega o se vende mercancía.</p></div>
-                                    <label class="switch"><input type="checkbox" id="perm-emp-0"><span class="slider round"></span></label>
+                                    <div class="setting-text"><p>Las configuraciones de logística son administradas por el supervisor de turno.</p></div>
                                 </div>
                             </div>
                         </div>
@@ -317,6 +357,7 @@
         </main>
     </div>
 
+    <!-- [LOS MODALES PERMANECEN EXACTAMENTE IGUAL] -->
     <div id="modal-producto" class="modal-overlay hidden">
         <div class="modal-content">
             <div class="modal-header">
@@ -327,12 +368,12 @@
                 <input type="hidden" id="prod-id">
                 <div class="form-grid mobile-col">
                     <div class="input-group">
-                        <label>Nombre del Producto</label>
-                        <input type="text" id="prod-nombre" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+" title="Solo se permiten letras y espacios" required>
+                        <label>SKU / Código</label>
+                        <input type="text" id="prod-sku" pattern="[0-9]+" title="Solo se permiten números" required placeholder="Escriba SKU existente para autocompletar">
                     </div>
                     <div class="input-group">
-                        <label>SKU / Código</label>
-                        <input type="text" id="prod-sku" pattern="[0-9]+" title="Solo se permiten números" required>
+                        <label>Nombre del Producto</label>
+                        <input type="text" id="prod-nombre" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+" title="Solo se permiten letras y espacios" required>
                     </div>
                     <div class="input-group">
                         <label>Marca</label>
@@ -376,6 +417,7 @@
                         <div class="field-row"><strong>Tipo</strong><select id="mov-tipo" class="mock-input" required style="border:none; cursor:pointer;"><option value="Entrada">Entrada (+)</option><option value="Salida">Salida (-)</option></select></div>
                         <div class="field-row"><strong>Producto</strong><select id="mov-producto" class="mock-input" required style="border:none; cursor:pointer; max-width: 200px;"></select></div>
                         <div class="field-row"><strong>Cantidad</strong><input type="number" id="mov-cantidad" class="mock-input" style="border:none; text-align:right; width:80px;" required min="1"></div>
+                        <div class="field-row" id="row-caducidad-mov"><strong>Caducidad (Lote nuevo)</strong><input type="date" id="mov-caducidad" class="mock-input" style="border:none;"></div>
                     </div>
                 </div>
                 <div class="modal-footer"><button type="submit" class="btn" style="width: 100%;">Registrar</button></div>

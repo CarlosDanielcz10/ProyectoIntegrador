@@ -197,3 +197,54 @@ input:checked + .slider:before { transform: translateX(20px); }
     .modal-content { padding: 20px; }
     .content-area { padding: 15px; }
 }
+
+body.role-empleado .admin-only {
+    display: none !important;
+}
+/* MODIFICACIÓN: Clases condicionales de Rol */
+body.role-empleado .admin-only {
+    display: none !important;
+}
+body:not(.role-empleado) .empleado-only {
+    display: none !important;
+}
+
+/* MODIFICACIÓN: Variables y reglas del Modo Oscuro */
+body.dark-mode {
+    --bg-color: #1a1a24;
+    --text-dark: #f0f0f5;
+    --text-muted: #a0aec0;
+    --border-color: #2d3748;
+    --secondary: #2d3748;
+    --accent: #2d3748;
+}
+
+body.dark-mode .sidebar, 
+body.dark-mode .topbar, 
+body.dark-mode .widget, 
+body.dark-mode .sum-card:not(.card-main):not(.card-orange):not(.card-purple):not(.card-green),
+body.dark-mode .table-controls, 
+body.dark-mode .table-container, 
+body.dark-mode .data-table,
+body.dark-mode .mov-stat-card, 
+body.dark-mode .stat-card, 
+body.dark-mode .p-stat-box,
+body.dark-mode .login-card, 
+body.dark-mode .modal-content, 
+body.dark-mode .mock-input,
+body.dark-mode input, 
+body.dark-mode select {
+    background-color: #232331 !important;
+    color: #f0f0f5 !important;
+    border-color: #3f4455;
+}
+
+body.dark-mode .data-table th, 
+body.dark-mode .data-table td { 
+    border-bottom-color: #3f4455; 
+}
+
+body.dark-mode .list-item.bg-light { 
+    background-color: #2d3748; 
+    border-color: #3f4455; 
+}
