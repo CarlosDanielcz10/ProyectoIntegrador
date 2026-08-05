@@ -201,15 +201,10 @@ input:checked + .slider:before { transform: translateX(20px); }
 body.role-empleado .admin-only {
     display: none !important;
 }
-/* MODIFICACIÓN: Clases condicionales de Rol */
-body.role-empleado .admin-only {
-    display: none !important;
-}
 body:not(.role-empleado) .empleado-only {
     display: none !important;
 }
 
-/* MODIFICACIÓN: Variables y reglas del Modo Oscuro */
 body.dark-mode {
     --bg-color: #1a1a24;
     --text-dark: #f0f0f5;
@@ -233,7 +228,8 @@ body.dark-mode .login-card,
 body.dark-mode .modal-content, 
 body.dark-mode .mock-input,
 body.dark-mode input, 
-body.dark-mode select {
+body.dark-mode select,
+body.dark-mode .table-search {
     background-color: #232331 !important;
     color: #f0f0f5 !important;
     border-color: #3f4455;
@@ -247,4 +243,21 @@ body.dark-mode .data-table td {
 body.dark-mode .list-item.bg-light { 
     background-color: #2d3748; 
     border-color: #3f4455; 
+}
+
+/* NUEVO: Corrección de las alertas naranja y roja para el modo oscuro */
+body.dark-mode .item-orange {
+    background-color: rgba(217, 119, 6, 0.15) !important;
+    border-color: rgba(217, 119, 6, 0.3) !important;
+}
+
+body.dark-mode .item-red {
+    background-color: rgba(203, 36, 49, 0.15) !important;
+    border-color: rgba(203, 36, 49, 0.3) !important;
+}
+
+/* Asegurar que el input de búsqueda sea transparente y no bloquee el color del contenedor */
+body.dark-mode .table-search input {
+    background-color: transparent !important;
+    color: #f0f0f5 !important;
 }
