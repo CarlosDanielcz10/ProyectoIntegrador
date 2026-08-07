@@ -76,6 +76,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const email = document.getElementById('login-email').value;
         const pass = document.getElementById('login-pass').value;
         
+        // 1. Verificamos primero si es una de las cuentas maestras locales en JS
+        let usuarioLocal = usuarios.find(u => u.email === email && u.pass === pass);
+        
+        if (usuarioLocal) {
+            currentUser = usuarioLocal;
+            entrarAlSistema();
+            return; // Detiene la ejecución aquí para no consultar la base de datos
+        }
+
+        // 2. Si no está en el código local, consulta la Base de Datos mediante C#
         try {
             const respuesta = await fetch('http://localhost:5000/api/login', {
                 method: 'POST',
@@ -86,6 +96,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (respuesta.ok) {
                 const usuarioBD = await respuesta.json();
                 usuarioBD.initials = usuarioBD.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
+                
+                // Homologar los permisos por si la BD no los incluye por defecto
+                if (!usuarioBD.permissions) {
+                    usuarioBD.permissions = usuarioBD.role === 'Administrador' ? [true, true] : [true];
+                }
+
                 currentUser = usuarioBD;
                 entrarAlSistema();
             } else {
