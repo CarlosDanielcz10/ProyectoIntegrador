@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 2, sku: "309411", nombre: "Sérum Vitamina C", marca: "The Ordinary", categoria: "Skincare", caducidad: "2026-08-15", precio: 420.00, stock: 3, min: 8 },
         { id: 3, sku: "110293", nombre: "Máscara de Pestañas", marca: "L'Oréal", categoria: "Maquillaje", caducidad: "2025-12-20", precio: 280.00, stock: 15, min: 10 },
         { id: 4, sku: "789102", nombre: "Crema Hidratante SPF30", marca: "CeraVe", categoria: "Skincare", caducidad: "2027-03-15", precio: 520.00, stock: 0, min: 6 },
-        { id: 5, sku: "401256", nombre: "Base Líquida Matte", marca: "MAC", categoria: "Maquillaje", caducidad: "2028-01-15", precio: 350.00, stock: 8, min: 5 } // Producto de prueba para mostrar agrupación
+        { id: 5, sku: "401256", nombre: "Base Líquida Matte", marca: "MAC", categoria: "Maquillaje", caducidad: "2028-01-15", precio: 350.00, stock: 8, min: 5 } 
     ];
 
     let lotesInventario = [
@@ -36,7 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentUser = null;
     let productoEditandoId = null;
 
-    // MODIFICACIÓN: Lógica de Modo Oscuro
     const toggleDarkMode = document.getElementById('toggle-dark-mode');
     if(toggleDarkMode) {
         toggleDarkMode.addEventListener('change', (e) => {
@@ -71,21 +70,20 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-show-register').addEventListener('click', () => { document.getElementById('card-login').classList.add('hidden'); document.getElementById('card-register').classList.remove('hidden'); });
     document.getElementById('btn-show-login').addEventListener('click', () => { document.getElementById('card-register').classList.add('hidden'); document.getElementById('card-login').classList.remove('hidden'); });
 
+    // CÓDIGO CORREGIDO: Interceptor de cuentas locales JS
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault(); 
         const email = document.getElementById('login-email').value;
         const pass = document.getElementById('login-pass').value;
         
-        // 1. Verificamos primero si es una de las cuentas maestras locales en JS
         let usuarioLocal = usuarios.find(u => u.email === email && u.pass === pass);
         
         if (usuarioLocal) {
             currentUser = usuarioLocal;
             entrarAlSistema();
-            return; // Detiene la ejecución aquí para no consultar la base de datos
+            return;
         }
-
-        // 2. Si no está en el código local, consulta la Base de Datos mediante C#
+        
         try {
             const respuesta = await fetch('http://localhost:5000/api/login', {
                 method: 'POST',
@@ -96,12 +94,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (respuesta.ok) {
                 const usuarioBD = await respuesta.json();
                 usuarioBD.initials = usuarioBD.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
-                
-                // Homologar los permisos por si la BD no los incluye por defecto
                 if (!usuarioBD.permissions) {
                     usuarioBD.permissions = usuarioBD.role === 'Administrador' ? [true, true] : [true];
                 }
-
                 currentUser = usuarioBD;
                 entrarAlSistema();
             } else {
@@ -129,12 +124,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (respuesta.ok) {
                 alert("Cuenta creada con éxito en la base de datos.");
-                document.getElementById('modal-usuarios').classList.add('hidden');
                 
-                if(!loginView.classList.contains('hidden')) {
+                // CÓDIGO CORREGIDO: Manejo de interfaz al registrar exitosamente
+                if(!currentUser) {
                     document.getElementById('btn-show-login').click();
                 } else {
-                    renderUsuariosAdmin();
+                    document.getElementById('btn-back-dashboard').click();
+                    abrirModalUsuarios();
                 }
             } else {
                 const error = await respuesta.text();
@@ -336,11 +332,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return matchText && matchCat;
         });
 
-        // MODIFICACIÓN: Agrupar por Nombre Alfabético y luego por Caducidad
         filtrados.sort((a, b) => {
             let nameCompare = a.nombre.localeCompare(b.nombre);
             if (nameCompare !== 0) return nameCompare;
-            // Si el nombre es el mismo, ordenamos por caducidad (del más viejo al más nuevo)
             return new Date(a.caducidad) - new Date(b.caducidad);
         });
 
@@ -405,18 +399,19 @@ document.addEventListener('DOMContentLoaded', () => {
             productos.forEach(p => {
                 let cad = evaluarCaducidad(p.caducidad);
                 
+                // CÓDIGO CORREGIDO: Alinear textos a la izquierda sobreescribiendo el flex
                 if (p.stock === 0) {
-                    container.innerHTML += `<div class="list-item item-red"><i class="fa-solid fa-xmark"></i><div><strong>${p.nombre}</strong><span>Urgente: Agotado</span></div></div>`;
+                    container.innerHTML += `<div class="list-item item-red" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-xmark"></i><div><strong>${p.nombre}</strong><span>Urgente: Agotado</span></div></div>`;
                 } else {
                     if (cad.isVencido) {
-                        container.innerHTML += `<div class="list-item item-red"><i class="fa-solid fa-skull-crossbones"></i><div><strong>${p.nombre}</strong><span>Urgente: Vencido</span></div></div>`;
+                        container.innerHTML += `<div class="list-item item-red" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-skull-crossbones"></i><div><strong>${p.nombre}</strong><span>Urgente: Vencido</span></div></div>`;
                     }
                     if (p.stock > 0 && p.stock < p.min) {
-                        container.innerHTML += `<div class="list-item item-orange"><i class="fa-solid fa-box"></i><div><strong>${p.nombre}</strong><span>Stock bajo: ${p.stock} pz</span></div></div>`;
+                        container.innerHTML += `<div class="list-item item-orange" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-box"></i><div><strong>${p.nombre}</strong><span>Stock bajo: ${p.stock} pz</span></div></div>`;
                     }
                     if (!cad.isVencido && cad.isProximo) {
                         let txtFinal = cad.days <= 7 ? "Vence en pocos días" : `Próximo a vencer (${cad.dateStr})`;
-                        container.innerHTML += `<div class="list-item item-orange"><i class="fa-solid fa-calendar-day"></i><div><strong>${p.nombre}</strong><span>${txtFinal}</span></div></div>`;
+                        container.innerHTML += `<div class="list-item item-orange" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-calendar-day"></i><div><strong>${p.nombre}</strong><span>${txtFinal}</span></div></div>`;
                     }
                 }
             });
@@ -658,11 +653,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // CÓDIGO CORREGIDO: Lógica para registrar usuario cerrando modal y permitiendo regresar al admin
     window.abrirRegistroDesdeAdmin = function() {
+        document.getElementById('modal-usuarios').classList.add('hidden');
+        document.getElementById('dashboard-view').classList.add('hidden');
+        document.getElementById('login-view').classList.remove('hidden');
         document.getElementById('card-login').classList.add('hidden');
         document.getElementById('card-register').classList.remove('hidden');
-        document.getElementById('btn-logout').click(); 
+        
+        document.getElementById('reg-toggle-text').classList.add('hidden');
+        document.getElementById('reg-back-text').classList.remove('hidden');
     };
+
+    document.getElementById('btn-back-dashboard')?.addEventListener('click', () => {
+        document.getElementById('login-view').classList.add('hidden');
+        document.getElementById('dashboard-view').classList.remove('hidden');
+        
+        document.getElementById('reg-toggle-text').classList.remove('hidden');
+        document.getElementById('reg-back-text').classList.add('hidden');
+        document.getElementById('register-form').reset();
+    });
 
     window.abrirModalCategorias = function() { 
         document.getElementById('modal-categorias').classList.remove('hidden'); 
