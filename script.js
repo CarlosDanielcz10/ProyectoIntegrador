@@ -62,6 +62,17 @@ document.addEventListener('DOMContentLoaded', () => {
         return { isVencido, isProximo, text, days: diffDays, dateStr: cad.toLocaleDateString('es-ES') };
     }
 
+    // NUEVA FUNCIÓN: Busca la caducidad del lote activo más próximo a vencer
+    function obtenerCaducidadActiva(sku, fallbackCaducidad) {
+        let lotesActivos = lotesInventario.filter(l => l.sku === sku && l.cantidad > 0);
+        if(lotesActivos.length > 0) {
+            // Ordenar lotes para que el más próximo a vencer quede primero
+            lotesActivos.sort((a, b) => new Date(a.caducidad) - new Date(b.caducidad));
+            return lotesActivos[0].caducidad;
+        }
+        return fallbackCaducidad; // Si no hay stock, mantiene la fecha base
+    }
+
     const loginForm = document.getElementById('login-form');
     const registerForm = document.getElementById('register-form');
     const loginView = document.getElementById('login-view');
@@ -70,7 +81,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-show-register').addEventListener('click', () => { document.getElementById('card-login').classList.add('hidden'); document.getElementById('card-register').classList.remove('hidden'); });
     document.getElementById('btn-show-login').addEventListener('click', () => { document.getElementById('card-register').classList.add('hidden'); document.getElementById('card-login').classList.remove('hidden'); });
 
-    // CÓDIGO CORREGIDO: Interceptor de cuentas locales JS
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault(); 
         const email = document.getElementById('login-email').value;
@@ -125,7 +135,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (respuesta.ok) {
                 alert("Cuenta creada con éxito en la base de datos.");
                 
-                // CÓDIGO CORREGIDO: Manejo de interfaz al registrar exitosamente
                 if(!currentUser) {
                     document.getElementById('btn-show-login').click();
                 } else {
@@ -332,14 +341,22 @@ document.addEventListener('DOMContentLoaded', () => {
             return matchText && matchCat;
         });
 
+        // MODIFICACIÓN: Ordenamiento basado en la caducidad REAL (lote activo)
         filtrados.sort((a, b) => {
             let nameCompare = a.nombre.localeCompare(b.nombre);
             if (nameCompare !== 0) return nameCompare;
-            return new Date(a.caducidad) - new Date(b.caducidad);
+            
+            let cadA = obtenerCaducidadActiva(a.sku, a.caducidad);
+            let cadB = obtenerCaducidadActiva(b.sku, b.caducidad);
+            
+            return new Date(cadA) - new Date(cadB);
         });
 
         filtrados.forEach(p => {
-            let cad = evaluarCaducidad(p.caducidad);
+            // MODIFICACIÓN: Evaluar caducidad dinámica desde los lotes
+            let caducidadReal = obtenerCaducidadActiva(p.sku, p.caducidad);
+            let cad = evaluarCaducidad(caducidadReal);
+            
             let isOut = p.stock === 0;
             let isLow = (!isOut) && (p.stock < p.min || cad.isProximo || cad.isVencido);
 
@@ -397,9 +414,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if(!container) return;
             container.innerHTML = '';
             productos.forEach(p => {
-                let cad = evaluarCaducidad(p.caducidad);
+                // MODIFICACIÓN: Alertas basadas en la caducidad real (lotes activos)
+                let caducidadReal = obtenerCaducidadActiva(p.sku, p.caducidad);
+                let cad = evaluarCaducidad(caducidadReal);
                 
-                // CÓDIGO CORREGIDO: Alinear textos a la izquierda sobreescribiendo el flex
                 if (p.stock === 0) {
                     container.innerHTML += `<div class="list-item item-red" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-xmark"></i><div><strong>${p.nombre}</strong><span>Urgente: Agotado</span></div></div>`;
                 } else {
@@ -653,7 +671,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // CÓDIGO CORREGIDO: Lógica para registrar usuario cerrando modal y permitiendo regresar al admin
     window.abrirRegistroDesdeAdmin = function() {
         document.getElementById('modal-usuarios').classList.add('hidden');
         document.getElementById('dashboard-view').classList.add('hidden');
